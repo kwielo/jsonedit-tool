@@ -38,21 +38,25 @@ body {
 
 .tabbar {
     display: flex;
-    align-items: center;
-    gap: 2px;
-    padding: 2px 4px 0;
-    font: 12px/1.4 system-ui, sans-serif;
+    align-items: stretch;
+    gap: 1px;
+    font: 13px/1.4 system-ui, sans-serif;
+    background: rgba(0, 0, 0, 0.04);
 }
 
 .tab {
-    display: inline-flex;
+    position: relative;
+    display: flex;
+    flex: 1;
     align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 4px 4px 0 0;
+    justify-content: center;
+    gap: 6px;
+    min-width: 0;
+    padding: 6px 10px;
     cursor: pointer;
     color: #4a4a4a;
     user-select: none;
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .tab:hover {
@@ -60,12 +64,22 @@ body {
 }
 
 .tab--active {
-    background: rgba(0, 0, 0, 0.1);
+    background: #fff;
     color: #000;
+    font-weight: 600;
+    box-shadow: inset 0 -2px 0 0 var(--jse-theme-color);
+}
+
+.tab--active:hover {
+    background: #fff;
 }
 
 .tab_close {
-    font-size: 12px;
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
     line-height: 1;
     padding: 0;
     background: none;
@@ -86,12 +100,15 @@ body {
     background: transparent;
     color: inherit;
     padding: 0;
+    text-align: center;
+    min-width: 0;
 }
 
 .tab_add {
-    font-size: 14px;
+    flex: 0 0 auto;
+    font-size: 16px;
     line-height: 1;
-    padding: 0 6px;
+    padding: 0 12px;
     background: none;
     border: none;
     cursor: pointer;
@@ -102,17 +119,24 @@ body {
     color: #000;
 }
 
+body.jse-theme-dark .tabbar {
+    background: rgba(255, 255, 255, 0.05);
+}
+
 body.jse-theme-dark .tab {
     color: #bbb;
+    background: rgba(255, 255, 255, 0.04);
 }
 
 body.jse-theme-dark .tab:hover {
     background: rgba(255, 255, 255, 0.08);
 }
 
-body.jse-theme-dark .tab--active {
-    background: rgba(255, 255, 255, 0.14);
+body.jse-theme-dark .tab--active,
+body.jse-theme-dark .tab--active:hover {
+    background: #1e1e1e;
     color: #fff;
+    box-shadow: inset 0 -2px 0 0 var(--jse-theme-color);
 }
 
 body.jse-theme-dark .tab_add {
@@ -134,11 +158,13 @@ body.jse-theme-dark .tab_add:hover {
     justify-content: center;
     align-items: center;
     gap: 24px;
-    padding: 0 8px;
+    width: 28px;
+    padding: 0;
 }
 
 .act_btn {
-    font-size: 28px;
+    font-size: 22px;
+    padding: 0;
     line-height: 1;
     background: none;
     border: none;
