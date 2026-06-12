@@ -1,0 +1,58 @@
+:root,
+.jse-theme-dark {
+    --jse-theme-color: #62c4ff;
+    --jse-theme-color-highlight: #8ad3ff;
+}
+
+body.jse-theme-dark {
+    background: #1e1e1e;
+}
+
+body.jse-theme-dark .act_btn {
+    color: #bbb;
+}
+
+body.jse-theme-dark .act_btn:hover {
+    color: #fff;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+
+.app {
+    display: flex;
+    height: 100%;
+    gap: 4px;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+.editor {
+    flex: 1;
+    min-width: 0;
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 0 8px;
+}
+
+.act_btn {
+    font-size: 28px;
+    line-height: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #4a4a4a;
+}
+
+.act_btn:hover {
+    color: #000;
+}
