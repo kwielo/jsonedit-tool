@@ -1,6 +1,19 @@
-:root {
+:root,
+.jse-theme-dark {
     --jse-theme-color: #62c4ff;
     --jse-theme-color-highlight: #8ad3ff;
+}
+
+body.jse-theme-dark {
+    background: #1e1e1e;
+}
+
+body.jse-theme-dark .act_btn {
+    color: #bbb;
+}
+
+body.jse-theme-dark .act_btn:hover {
+    color: #fff;
 }
 
 html,

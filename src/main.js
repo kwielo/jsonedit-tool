@@ -1,5 +1,16 @@
 import { createJSONEditor } from 'vanilla-jsoneditor'
+import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
 import './style.css'
+
+const applyTheme = (dark) => {
+  document.body.classList.toggle('jse-theme-dark', dark)
+  document.getElementById('btn-theme').textContent = dark ? '\u2600' : '\u263E'
+}
+
+const storedTheme = localStorage.getItem('theme')
+let darkMode = storedTheme
+  ? storedTheme === 'dark'
+  : window.matchMedia('(prefers-color-scheme: dark)').matches
 
 const emptyContent = () => ({ json: {} })
 
@@ -31,6 +42,14 @@ document.addEventListener('paste', (event) => {
   }
   event.preventDefault()
   leftEditor.set({ text })
+})
+
+applyTheme(darkMode)
+
+document.getElementById('btn-theme').addEventListener('click', () => {
+  darkMode = !darkMode
+  localStorage.setItem('theme', darkMode ? 'dark' : 'light')
+  applyTheme(darkMode)
 })
 
 document.getElementById('btn-clear').addEventListener('click', () => {
