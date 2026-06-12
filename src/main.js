@@ -19,6 +19,20 @@ const rightEditor = createJSONEditor({
   },
 })
 
+// pasting anywhere outside the editors replaces the left pane content
+document.addEventListener('paste', (event) => {
+  const target = event.target
+  if (target instanceof Element && target.closest('.editor, input, textarea, [contenteditable]')) {
+    return
+  }
+  const text = event.clipboardData?.getData('text')
+  if (!text) {
+    return
+  }
+  event.preventDefault()
+  leftEditor.set({ text })
+})
+
 document.getElementById('btn-clear').addEventListener('click', () => {
   if (confirm('You sure?')) {
     leftEditor.set(emptyContent())
