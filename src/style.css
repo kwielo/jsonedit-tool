@@ -1,3 +1,8 @@
+:root {
+    --jse-theme-color: #62c4ff;
+    --jse-theme-color-highlight: #8ad3ff;
+}
+
 html,
 body {
     height: 100%;
