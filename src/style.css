@@ -22,12 +22,105 @@ body {
     margin: 0;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+}
+
 .app {
     display: flex;
-    height: 100%;
+    flex: 1;
+    min-height: 0;
     gap: 4px;
     padding: 4px;
     box-sizing: border-box;
+}
+
+.tabbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 4px 0;
+    font: 12px/1.4 system-ui, sans-serif;
+}
+
+.tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    color: #4a4a4a;
+    user-select: none;
+}
+
+.tab:hover {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.tab--active {
+    background: rgba(0, 0, 0, 0.1);
+    color: #000;
+}
+
+.tab_close {
+    font-size: 12px;
+    line-height: 1;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.5;
+}
+
+.tab_close:hover {
+    opacity: 1;
+}
+
+.tab_input {
+    font: inherit;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+.tab_add {
+    font-size: 14px;
+    line-height: 1;
+    padding: 0 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #4a4a4a;
+}
+
+.tab_add:hover {
+    color: #000;
+}
+
+body.jse-theme-dark .tab {
+    color: #bbb;
+}
+
+body.jse-theme-dark .tab:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+body.jse-theme-dark .tab--active {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+}
+
+body.jse-theme-dark .tab_add {
+    color: #bbb;
+}
+
+body.jse-theme-dark .tab_add:hover {
+    color: #fff;
 }
 
 .editor {
