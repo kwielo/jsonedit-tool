@@ -158,11 +158,13 @@ body.jse-theme-dark .tab_add:hover {
     justify-content: center;
     align-items: center;
     gap: 24px;
-    padding: 0 6px;
+    width: 28px;
+    padding: 0;
 }
 
 .act_btn {
-    font-size: 23px;
+    font-size: 22px;
+    padding: 0;
     line-height: 1;
     background: none;
     border: none;
