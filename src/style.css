@@ -100,8 +100,15 @@ body {
     background: transparent;
     color: inherit;
     padding: 0;
-    text-align: center;
+    text-align: left;
+    flex: 1 1 auto;
+    width: 100%;
     min-width: 0;
+    box-sizing: border-box;
+}
+
+.tab--editing .tab_close {
+    display: none;
 }
 
 .tab_add {
@@ -171,9 +178,19 @@ body.jse-theme-dark .tab_add:hover {
     color: #fff;
 }
 
+.panes {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+}
+
 .editor {
     flex: 1;
     min-width: 0;
+}
+
+.editor.hidden {
+    display: none;
 }
 
 .actions {
