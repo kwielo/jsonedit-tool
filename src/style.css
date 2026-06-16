@@ -101,7 +101,14 @@ body {
     color: inherit;
     padding: 0;
     text-align: center;
+    flex: 1 1 auto;
+    width: 100%;
     min-width: 0;
+    box-sizing: border-box;
+}
+
+.tab--editing .tab_close {
+    display: none;
 }
 
 .tab_add {
@@ -117,6 +124,30 @@ body {
 
 .tab_add:hover {
     color: #000;
+}
+
+.tab_tool {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #4a4a4a;
+}
+
+.tab_tool:hover {
+    color: #d23f31;
+}
+
+body.jse-theme-dark .tab_tool {
+    color: #bbb;
+}
+
+body.jse-theme-dark .tab_tool:hover {
+    color: #ff6b5e;
 }
 
 body.jse-theme-dark .tabbar {
@@ -147,9 +178,19 @@ body.jse-theme-dark .tab_add:hover {
     color: #fff;
 }
 
+.panes {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+}
+
 .editor {
     flex: 1;
     min-width: 0;
+}
+
+.editor.hidden {
+    display: none;
 }
 
 .actions {

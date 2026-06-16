@@ -1,6 +1,7 @@
 import { createJSONEditor } from 'vanilla-jsoneditor'
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
 import './style.css'
+import { loadSession, saveSession, clearAllSessions } from './storage.js'
 
 const applyTheme = (dark) => {
   document.body.classList.toggle('jse-theme-dark', dark)
@@ -14,38 +15,110 @@ let darkMode = storedTheme
 
 const emptyContent = () => ({ json: {} })
 
-const leftEditor = createJSONEditor({
-  target: document.getElementById('editor-left'),
-  props: {
-    content: emptyContent(),
-    mode: 'text',
-  },
-})
+// Each browser tab gets its own sessionId, kept in the URL so a refresh restores
+// that tab's data. Duplicating/sharing the URL reopens the same session.
+const ensureSessionId = () => {
+  const params = new URLSearchParams(window.location.search)
+  let id = params.get('s')
+  if (!id) {
+    id = crypto.randomUUID()
+    params.set('s', id)
+    const query = params.toString()
+    window.history.replaceState(null, '', `${window.location.pathname}?${query}${window.location.hash}`)
+  }
+  return id
+}
 
-const rightEditor = createJSONEditor({
-  target: document.getElementById('editor-right'),
-  props: {
-    content: emptyContent(),
-    mode: 'tree',
-  },
-})
+const sessionId = ensureSessionId()
 
+const leftPanes = document.getElementById('left-panes')
+const rightPanes = document.getElementById('right-panes')
 const tabbar = document.getElementById('tabbar')
 const addTabButton = document.getElementById('btn-add-tab')
 
+// Each tab owns a live left+right editor pair so that switching tabs preserves
+// the tree's expansion, scroll, selection and undo history. Editors are created
+// lazily on first activation and destroyed when the tab is closed.
 let tabs = []
 let activeTab = null
 let tabCounter = 0
 
-const saveActiveTab = () => {
-  if (!activeTab) return
-  activeTab.left = leftEditor.get()
-  activeTab.right = rightEditor.get()
+let persistTimer = null
+const schedulePersist = () => {
+  clearTimeout(persistTimer)
+  persistTimer = setTimeout(persist, 300)
 }
 
-const loadTab = (tab) => {
-  leftEditor.set(tab.left)
-  rightEditor.set(tab.right)
+const syncActiveTab = () => {
+  if (!activeTab || !activeTab.leftEditor) return
+  activeTab.left = activeTab.leftEditor.get()
+  activeTab.right = activeTab.rightEditor.get()
+}
+
+const persist = () => {
+  syncActiveTab()
+  const state = {
+    tabCounter,
+    activeIndex: Math.max(0, tabs.indexOf(activeTab)),
+    tabs: tabs.map((tab) => ({ name: tab.name, left: tab.left, right: tab.right })),
+  }
+  saveSession(sessionId, state)
+}
+
+const ensureEditors = (tab) => {
+  if (tab.leftEditor) return
+  const leftEl = document.createElement('div')
+  leftEl.className = 'editor'
+  leftPanes.appendChild(leftEl)
+  const rightEl = document.createElement('div')
+  rightEl.className = 'editor'
+  rightPanes.appendChild(rightEl)
+  tab.leftEl = leftEl
+  tab.rightEl = rightEl
+  tab.leftEditor = createJSONEditor({
+    target: leftEl,
+    props: {
+      content: tab.left,
+      mode: 'text',
+      onChange: (content) => {
+        tab.left = content
+        schedulePersist()
+      },
+    },
+  })
+  tab.rightEditor = createJSONEditor({
+    target: rightEl,
+    props: {
+      content: tab.right,
+      mode: 'tree',
+      onChange: (content) => {
+        tab.right = content
+        schedulePersist()
+      },
+    },
+  })
+}
+
+const destroyEditors = (tab) => {
+  const { leftEditor, rightEditor, leftEl, rightEl } = tab
+  tab.leftEditor = null
+  tab.rightEditor = null
+  tab.leftEl = null
+  tab.rightEl = null
+  if (leftEditor) leftEditor.destroy().then(() => leftEl?.remove())
+  else leftEl?.remove()
+  if (rightEditor) rightEditor.destroy().then(() => rightEl?.remove())
+  else rightEl?.remove()
+}
+
+const showTab = (tab) => {
+  tab.leftEl?.classList.remove('hidden')
+  tab.rightEl?.classList.remove('hidden')
+}
+
+const hideTab = (tab) => {
+  tab?.leftEl?.classList.add('hidden')
+  tab?.rightEl?.classList.add('hidden')
 }
 
 const renderTabs = () => {
@@ -75,22 +148,33 @@ const renderTabs = () => {
     }
 
     el.addEventListener('click', () => switchTab(tab))
-    el.addEventListener('dblclick', () => startRename(tab, label))
+    el.addEventListener('dblclick', () => startRename(tab, label, el))
     tabbar.insertBefore(el, addTabButton)
   })
 }
 
 const switchTab = (tab) => {
   if (tab === activeTab) return
-  saveActiveTab()
+  syncActiveTab()
+  hideTab(activeTab)
   activeTab = tab
-  loadTab(tab)
+  ensureEditors(tab)
+  showTab(tab)
   renderTabs()
+  persist()
 }
 
 const addTab = () => {
   tabCounter += 1
-  const tab = { name: `Tab ${tabCounter}`, left: emptyContent(), right: emptyContent() }
+  const tab = {
+    name: `Tab ${tabCounter}`,
+    left: emptyContent(),
+    right: emptyContent(),
+    leftEditor: null,
+    rightEditor: null,
+    leftEl: null,
+    rightEl: null,
+  }
   tabs.push(tab)
   switchTab(tab)
   renderTabs()
@@ -98,25 +182,30 @@ const addTab = () => {
 
 const closeTab = (tab) => {
   const index = tabs.indexOf(tab)
+  const wasActive = tab === activeTab
   tabs = tabs.filter((t) => t !== tab)
-  if (tab === activeTab) {
+  destroyEditors(tab)
+  if (wasActive) {
     activeTab = null
     switchTab(tabs[Math.min(index, tabs.length - 1)])
   }
   renderTabs()
+  persist()
 }
 
-const startRename = (tab, label) => {
+const startRename = (tab, label, el) => {
+  el.classList.add('tab--editing')
   const input = document.createElement('input')
   input.className = 'tab_input'
   input.value = tab.name
-  input.size = Math.max(tab.name.length, 4)
   label.replaceWith(input)
   input.focus()
   input.select()
   const finish = () => {
     tab.name = input.value.trim() || tab.name
+    el.classList.remove('tab--editing')
     renderTabs()
+    persist()
   }
   input.addEventListener('blur', finish)
   input.addEventListener('keydown', (event) => {
@@ -129,7 +218,6 @@ const startRename = (tab, label) => {
 }
 
 addTabButton.addEventListener('click', addTab)
-addTab()
 
 // pasting anywhere outside the editors replaces the left pane content
 document.addEventListener('paste', (event) => {
@@ -138,11 +226,13 @@ document.addEventListener('paste', (event) => {
     return
   }
   const text = event.clipboardData?.getData('text')
-  if (!text) {
+  if (!text || !activeTab) {
     return
   }
   event.preventDefault()
-  leftEditor.set({ text })
+  activeTab.leftEditor.set({ text })
+  activeTab.left = { text }
+  persist()
 })
 
 applyTheme(darkMode)
@@ -154,16 +244,59 @@ document.getElementById('btn-theme').addEventListener('click', () => {
 })
 
 document.getElementById('btn-clear').addEventListener('click', () => {
+  if (!activeTab) return
   if (confirm('You sure?')) {
-    leftEditor.set(emptyContent())
-    rightEditor.set(emptyContent())
+    activeTab.leftEditor.set(emptyContent())
+    activeTab.rightEditor.set(emptyContent())
+    persist()
   }
 })
 
 document.getElementById('btn-l2r').addEventListener('click', () => {
-  rightEditor.set(leftEditor.get())
+  if (!activeTab) return
+  activeTab.rightEditor.set(activeTab.leftEditor.get())
+  persist()
 })
 
 document.getElementById('btn-r2l').addEventListener('click', () => {
-  leftEditor.set(rightEditor.get())
+  if (!activeTab) return
+  activeTab.leftEditor.set(activeTab.rightEditor.get())
+  persist()
 })
+
+document.getElementById('btn-clear-all').addEventListener('click', async () => {
+  if (!confirm('Clear ALL stored JSON data for every tab/session? This cannot be undone.')) {
+    return
+  }
+  await clearAllSessions()
+  tabs.forEach(destroyEditors)
+  tabs = []
+  activeTab = null
+  tabCounter = 0
+  addTab()
+})
+
+// Restore this session's tabs on load, or start a fresh single tab.
+const init = async () => {
+  const state = await loadSession(sessionId)
+  if (state && Array.isArray(state.tabs) && state.tabs.length > 0) {
+    tabs = state.tabs.map((tab) => ({
+      name: tab.name,
+      left: tab.left ?? emptyContent(),
+      right: tab.right ?? emptyContent(),
+      leftEditor: null,
+      rightEditor: null,
+      leftEl: null,
+      rightEl: null,
+    }))
+    tabCounter = state.tabCounter ?? tabs.length
+    activeTab = tabs[Math.min(state.activeIndex ?? 0, tabs.length - 1)]
+    ensureEditors(activeTab)
+    showTab(activeTab)
+    renderTabs()
+  } else {
+    addTab()
+  }
+}
+
+init()
