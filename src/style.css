@@ -119,6 +119,30 @@ body {
     color: #000;
 }
 
+.tab_tool {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #4a4a4a;
+}
+
+.tab_tool:hover {
+    color: #d23f31;
+}
+
+body.jse-theme-dark .tab_tool {
+    color: #bbb;
+}
+
+body.jse-theme-dark .tab_tool:hover {
+    color: #ff6b5e;
+}
+
 body.jse-theme-dark .tabbar {
     background: rgba(255, 255, 255, 0.05);
 }
