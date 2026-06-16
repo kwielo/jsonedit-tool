@@ -3,15 +3,30 @@ import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
 import './style.css'
 import { loadSession, saveSession, clearAllSessions } from './storage.js'
 
-const applyTheme = (dark) => {
+const THEME_ICONS = { dark: '\u263E', light: '\u2600', auto: '\u25D0' }
+const THEME_TITLES = { dark: 'Dark mode', light: 'Light mode', auto: 'Auto (system)' }
+const THEME_CYCLE = { dark: 'light', light: 'auto', auto: 'dark' }
+
+const resolveTheme = (mode) =>
+  mode === 'auto'
+    ? window.matchMedia('(prefers-color-scheme: dark)').matches
+    : mode === 'dark'
+
+const applyTheme = () => {
+  const dark = resolveTheme(themeMode)
   document.body.classList.toggle('jse-theme-dark', dark)
-  document.getElementById('btn-theme').textContent = dark ? '\u2600' : '\u263E'
+  const btn = document.getElementById('btn-theme')
+  btn.textContent = THEME_ICONS[themeMode]
+  btn.title = THEME_TITLES[themeMode]
+  btn.setAttribute('aria-label', THEME_TITLES[themeMode])
 }
 
 const storedTheme = localStorage.getItem('theme')
-let darkMode = storedTheme
-  ? storedTheme === 'dark'
-  : window.matchMedia('(prefers-color-scheme: dark)').matches
+let themeMode = storedTheme && storedTheme in THEME_ICONS ? storedTheme : 'auto'
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+  if (themeMode === 'auto') applyTheme()
+})
 
 const emptyContent = () => ({ json: {} })
 
@@ -235,12 +250,12 @@ document.addEventListener('paste', (event) => {
   persist()
 })
 
-applyTheme(darkMode)
+applyTheme()
 
 document.getElementById('btn-theme').addEventListener('click', () => {
-  darkMode = !darkMode
-  localStorage.setItem('theme', darkMode ? 'dark' : 'light')
-  applyTheme(darkMode)
+  themeMode = THEME_CYCLE[themeMode]
+  localStorage.setItem('theme', themeMode)
+  applyTheme()
 })
 
 document.getElementById('btn-clear').addEventListener('click', () => {
