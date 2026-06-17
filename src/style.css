@@ -168,7 +168,7 @@ body {
 .tab_tool--trash {
     width: 16px;
     height: 16px;
-    box-sizing: content-box;
+    align-self: center;
     background: currentColor;
     -webkit-mask: url('./icons/trash.svg') no-repeat center / contain;
     mask: url('./icons/trash.svg') no-repeat center / contain;
