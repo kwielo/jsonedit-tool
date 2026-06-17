@@ -74,6 +74,34 @@ body {
     background: #fff;
 }
 
+.tab_edit {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    border: none;
+    cursor: pointer;
+    opacity: 0.5;
+    line-height: 1;
+    background: currentColor;
+    -webkit-mask: url('./icons/edit.svg') no-repeat center / contain;
+    mask: url('./icons/edit.svg') no-repeat center / contain;
+}
+
+.tab:hover .tab_edit {
+    display: inline-flex;
+}
+
+.tab_edit:hover {
+    opacity: 1;
+}
+
+.tab--editing .tab_edit {
+    display: none;
+}
+
 .tab_close {
     position: absolute;
     right: 8px;
@@ -132,10 +160,18 @@ body {
     align-items: center;
     justify-content: center;
     padding: 0 10px;
-    background: none;
     border: none;
     cursor: pointer;
     color: #4a4a4a;
+}
+
+.tab_tool--trash {
+    width: 16px;
+    height: 16px;
+    box-sizing: content-box;
+    background: currentColor;
+    -webkit-mask: url('./icons/trash.svg') no-repeat center / contain;
+    mask: url('./icons/trash.svg') no-repeat center / contain;
 }
 
 .tab_tool:hover {
