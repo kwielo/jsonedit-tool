@@ -74,6 +74,31 @@ body {
     background: #fff;
 }
 
+.tab_edit {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.5;
+    line-height: 1;
+}
+
+.tab:hover .tab_edit {
+    display: inline-flex;
+}
+
+.tab_edit:hover {
+    opacity: 1;
+}
+
+.tab--editing .tab_edit {
+    display: none;
+}
+
 .tab_close {
     position: absolute;
     right: 8px;
