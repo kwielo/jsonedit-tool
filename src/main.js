@@ -50,6 +50,7 @@ const leftPanes = document.getElementById('left-panes')
 const rightPanes = document.getElementById('right-panes')
 const tabbar = document.getElementById('tabbar')
 const addTabButton = document.getElementById('btn-add-tab')
+const clearAllButton = document.getElementById('btn-clear-all')
 
 // Each tab owns a live left+right editor pair so that switching tabs preserves
 // the tree's expansion, scroll, selection and undo history. Editors are created
@@ -176,7 +177,7 @@ const renderTabs = () => {
 
     el.addEventListener('click', () => switchTab(tab))
     el.addEventListener('dblclick', () => startRename(tab, label, el))
-    tabbar.insertBefore(el, addTabButton)
+    tabbar.insertBefore(el, clearAllButton)
   })
 }
 
