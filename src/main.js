@@ -58,6 +58,7 @@ const clearAllButton = document.getElementById('btn-clear-all')
 let tabs = []
 let activeTab = null
 let tabCounter = 0
+let hasRenamed = localStorage.getItem('hasRenamed') === 'true'
 
 let persistTimer = null
 const schedulePersist = () => {
@@ -142,23 +143,26 @@ const renderTabs = () => {
   tabs.forEach((tab) => {
     const el = document.createElement('span')
     el.className = 'tab' + (tab === activeTab ? ' tab--active' : '')
-    el.title = 'Double-click to rename.'
 
     const label = document.createElement('span')
     label.className = 'tab_label'
     label.textContent = tab.name
     el.appendChild(label)
 
-    const editIcon = document.createElement('button')
-    editIcon.type = 'button'
-    editIcon.className = 'tab_edit'
-    editIcon.title = 'Rename tab'
-    editIcon.setAttribute('aria-label', 'Rename tab')
-    editIcon.addEventListener('click', (event) => {
-      event.stopPropagation()
-      startRename(tab, label, el)
-    })
-    el.appendChild(editIcon)
+    if (!hasRenamed) {
+      const tooltip = document.createElement('span')
+      tooltip.className = 'tab_tooltip'
+      tooltip.textContent = 'Double click to edit'
+      el.appendChild(tooltip)
+      let hoverTimer = null
+      el.addEventListener('mouseenter', () => {
+        hoverTimer = setTimeout(() => { tooltip.style.display = 'block' }, 600)
+      })
+      el.addEventListener('mouseleave', () => {
+        clearTimeout(hoverTimer)
+        tooltip.style.display = 'none'
+      })
+    }
 
     if (tabs.length > 1) {
       const close = document.createElement('button')
@@ -231,6 +235,10 @@ const startRename = (tab, label, el) => {
   const finish = () => {
     tab.name = input.value.trim() || tab.name
     el.classList.remove('tab--editing')
+    if (!hasRenamed) {
+      hasRenamed = true
+      localStorage.setItem('hasRenamed', 'true')
+    }
     renderTabs()
     persist()
   }

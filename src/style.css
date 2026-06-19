@@ -74,32 +74,20 @@ body {
     background: #fff;
 }
 
-.tab_edit {
+.tab_tooltip {
     display: none;
-    align-items: center;
-    justify-content: center;
-    width: 12px;
-    height: 12px;
-    padding: 0;
-    border: none;
-    cursor: pointer;
-    opacity: 0.5;
-    line-height: 1;
-    background: currentColor;
-    -webkit-mask: url('./icons/edit.svg') no-repeat center / contain;
-    mask: url('./icons/edit.svg') no-repeat center / contain;
-}
-
-.tab:hover .tab_edit {
-    display: inline-flex;
-}
-
-.tab_edit:hover {
-    opacity: 1;
-}
-
-.tab--editing .tab_edit {
-    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 3px 8px;
+    font-size: 11px;
+    white-space: nowrap;
+    color: #fff;
+    background: #333;
+    border-radius: 3px;
+    pointer-events: none;
+    z-index: 10;
 }
 
 .tab_close {
@@ -139,36 +127,31 @@ body {
     display: none;
 }
 
-.tab_add {
+.tab_add,
+.tab_tool {
     flex: 0 0 auto;
-    font-size: 16px;
-    line-height: 1;
-    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    padding: 0;
     background: none;
     border: none;
     cursor: pointer;
     color: #4a4a4a;
+    font-size: 16px;
+    line-height: 1;
 }
 
 .tab_add:hover {
     color: #000;
 }
 
-.tab_tool {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 10px;
-    border: none;
-    cursor: pointer;
-    color: #4a4a4a;
-}
-
-.tab_tool--trash {
+.tab_tool--trash::before {
+    content: '';
+    display: block;
     width: 16px;
     height: 16px;
-    align-self: center;
     background: currentColor;
     -webkit-mask: url('./icons/trash.svg') no-repeat center / contain;
     mask: url('./icons/trash.svg') no-repeat center / contain;
