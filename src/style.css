@@ -293,6 +293,15 @@ body.jse-theme-dark .tab_add:hover {
     font-weight: 600;
 }
 
+.palette_item--action {
+    opacity: 0.7;
+    font-style: italic;
+}
+
+.palette_item--action.palette_item--active {
+    opacity: 1;
+}
+
 body.jse-theme-dark .palette {
     background: #2d2d2d;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
