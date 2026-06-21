@@ -112,10 +112,10 @@ export class TabManager {
     this.persist()
   }
 
-  add() {
+  add(name) {
     this.counter += 1
     const tab = {
-      name: `Tab ${this.counter}`,
+      name: name || `Tab ${this.counter}`,
       left: emptyContent(),
       right: emptyContent(),
       leftEditor: null,
