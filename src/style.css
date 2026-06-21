@@ -235,3 +235,79 @@ body.jse-theme-dark .tab_add:hover {
 .act_btn:hover {
     color: #000;
 }
+
+/* Command palette */
+.palette_backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 100;
+}
+
+.palette {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+    max-width: 90vw;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    z-index: 101;
+    font: 13px/1.4 system-ui, sans-serif;
+    overflow: hidden;
+}
+
+.palette_input {
+    width: 100%;
+    padding: 10px 14px;
+    font: inherit;
+    border: none;
+    outline: none;
+    background: transparent;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.palette_list {
+    list-style: none;
+    margin: 0;
+    padding: 4px 0;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.palette_item {
+    padding: 6px 14px;
+    cursor: pointer;
+    color: #333;
+}
+
+.palette_item--active {
+    background: var(--jse-theme-color);
+    color: #fff;
+}
+
+.palette_item--current {
+    font-weight: 600;
+}
+
+body.jse-theme-dark .palette {
+    background: #2d2d2d;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+body.jse-theme-dark .palette_input {
+    color: #eee;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.jse-theme-dark .palette_item {
+    color: #ccc;
+}
+
+body.jse-theme-dark .palette_item--active {
+    background: var(--jse-theme-color);
+    color: #fff;
+}
